@@ -1,33 +1,60 @@
 package com.mygdx.revelare;
 
-import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-public class RevelareMain extends ApplicationAdapter {
-	SpriteBatch batch;
-	Texture img;
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.mygdx.revelare.screens.MainMenuScreen;
+
+public class RevelareMain extends Game {
+
+    /** Static Members */
+    public static final String TITLE = "Revelare";
+    public static final float VERSION = 0.1f;
+    public static final int V_WIDTH = 720;
+    public static final int V_HEIGHT = 1280;
+
+    /** Members */
+    public SpriteBatch batch;
+	public OrthographicCamera camera;
+
+	public AssetManager assets;
+
+	public BitmapFont font;
+	public ShapeRenderer shapeRenderer;
 	
 	@Override
 	public void create () {
+	    assets = new AssetManager();
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, V_WIDTH, V_HEIGHT);
 		batch = new SpriteBatch();
-		img = new Texture("badlogic.jpg");
+		font = new BitmapFont();
+		shapeRenderer = new ShapeRenderer();
+
+		this.setScreen(new MainMenuScreen(this));
 	}
 
 	@Override
 	public void render () {
-		Gdx.gl.glClearColor(1, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		batch.begin();
-		batch.draw(img, 0, 0);
-		batch.end();
+		super.render();
 	}
 	
 	@Override
 	public void dispose () {
 		batch.dispose();
-		img.dispose();
+		font.dispose();
+		assets.dispose();
+		shapeRenderer.dispose();
+		this.getScreen().dispose();
+	}
+
+	public void queueAssets(){
+		assets.get("circle.png", Texture.class);
+		assets.get("circleborder.png", Texture.class);
 	}
 }
