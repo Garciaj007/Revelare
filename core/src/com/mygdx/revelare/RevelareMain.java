@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.mygdx.revelare.Utils.BeatSequencer;
 import com.mygdx.revelare.screens.MainMenuScreen;
 
 public class RevelareMain extends Game {
@@ -21,12 +22,12 @@ public class RevelareMain extends Game {
     /** Members */
     public SpriteBatch batch;
 	public OrthographicCamera camera;
-
 	public AssetManager assets;
-
 	public BitmapFont font;
 	public ShapeRenderer shapeRenderer;
-	
+	public ShapeRenderer shapeRendererBG;
+	public ShapeRenderer shapeRendererFG;
+
 	@Override
 	public void create () {
 	    assets = new AssetManager();
@@ -35,6 +36,10 @@ public class RevelareMain extends Game {
 		batch = new SpriteBatch();
 		font = new BitmapFont();
 		shapeRenderer = new ShapeRenderer();
+		shapeRendererFG = new ShapeRenderer();
+		shapeRendererBG = new ShapeRenderer();
+
+		//queueAssets();
 
 		this.setScreen(new MainMenuScreen(this));
 	}
@@ -50,6 +55,8 @@ public class RevelareMain extends Game {
 		font.dispose();
 		assets.dispose();
 		shapeRenderer.dispose();
+		shapeRendererBG.dispose();
+		shapeRendererFG.dispose();
 		this.getScreen().dispose();
 	}
 
