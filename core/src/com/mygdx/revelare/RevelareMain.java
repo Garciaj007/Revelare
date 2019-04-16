@@ -2,7 +2,9 @@ package com.mygdx.revelare;
 
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -27,6 +29,8 @@ public class RevelareMain extends Game {
 	public ShapeRenderer shapeRenderer;
 	public ShapeRenderer shapeRendererBG;
 	public ShapeRenderer shapeRendererFG;
+
+	public Music music;
 
 	@Override
 	public void create () {
@@ -57,11 +61,7 @@ public class RevelareMain extends Game {
 		shapeRenderer.dispose();
 		shapeRendererBG.dispose();
 		shapeRendererFG.dispose();
+		music.dispose();
 		this.getScreen().dispose();
-	}
-
-	public void queueAssets(){
-		assets.get("circle.png", Texture.class);
-		assets.get("circleborder.png", Texture.class);
 	}
 }

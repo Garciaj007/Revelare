@@ -9,7 +9,7 @@ public class BeatSequencer {
 
         private static float beatInterval, beatTimer, beatIntervalD8, beatTimerD8;
         private static int beatCountFull, beatCountD8;
-        private static boolean active;
+        private static boolean active = false;
 
         public static void update(float delta){
 
@@ -22,7 +22,7 @@ public class BeatSequencer {
                 beatTimer -= beatInterval;
                 beatFull = true;
                 beatCountFull++;
-                System.out.println("Full Beat Triggered");
+                System.out.print("Full Beat Triggered");
             }
 
             beatD8 = false;
@@ -33,7 +33,7 @@ public class BeatSequencer {
                 beatTimerD8 -= beatIntervalD8;
                 beatD8 = true;
                 beatCountD8++;
-                System.out.println("8th Beat Triggered");
+                System.out.print("8th Beat Triggered");
             }
         }
 
