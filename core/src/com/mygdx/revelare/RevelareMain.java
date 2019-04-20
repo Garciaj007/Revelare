@@ -2,16 +2,13 @@ package com.mygdx.revelare;
 
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.mygdx.revelare.Utils.BeatSequencer;
-import com.mygdx.revelare.screens.MainMenuScreen;
+import com.mygdx.revelare.Screens.MainMenuScreen;
+import com.mygdx.revelare.Utils.Assets;
 
 public class RevelareMain extends Game {
 
@@ -24,28 +21,25 @@ public class RevelareMain extends Game {
     /** Members */
     public SpriteBatch batch;
 	public OrthographicCamera camera;
-	public AssetManager assets;
 	public BitmapFont font;
-	public ShapeRenderer shapeRenderer;
-	public ShapeRenderer shapeRendererBG;
-	public ShapeRenderer shapeRendererFG;
-
 	public Music music;
 
 	@Override
 	public void create () {
-	    assets = new AssetManager();
+		Assets.load();
         camera = new OrthographicCamera();
         camera.setToOrtho(false, V_WIDTH, V_HEIGHT);
 		batch = new SpriteBatch();
 		font = new BitmapFont();
-		shapeRenderer = new ShapeRenderer();
-		shapeRendererFG = new ShapeRenderer();
-		shapeRendererBG = new ShapeRenderer();
 
-		//queueAssets();
-
-		this.setScreen(new MainMenuScreen(this));
+		while(true) {
+            if (Assets.update()) {
+                setScreen(new MainMenuScreen(this));
+                break;
+            } else {
+                System.out.println("Waiting on Assets: " + Assets.progress() + "%");
+            }
+        }
 	}
 
 	@Override
@@ -56,12 +50,7 @@ public class RevelareMain extends Game {
 	@Override
 	public void dispose () {
 		batch.dispose();
-		font.dispose();
-		assets.dispose();
-		shapeRenderer.dispose();
-		shapeRendererBG.dispose();
-		shapeRendererFG.dispose();
-		music.dispose();
-		this.getScreen().dispose();
+		Assets.dispose();
+		getScreen().dispose();
 	}
 }

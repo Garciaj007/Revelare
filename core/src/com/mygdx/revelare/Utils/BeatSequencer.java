@@ -1,14 +1,16 @@
 package com.mygdx.revelare.Utils;
 
+import com.mygdx.revelare.RevelareMain;
+
 public class BeatSequencer {
 
     public static class BeatAnalyser{
         //Class Members
         public static float bpm;
-        public static boolean beatFull, beatD8;
+        public static boolean beatFull, beatHalf, beatD8;
 
-        private static float beatInterval, beatTimer, beatIntervalD8, beatTimerD8;
-        private static int beatCountFull, beatCountD8;
+        private static float beatInterval, beatTimer, beatIntervalHalf, beatTimerHalf, beatIntervalD8, beatTimerD8;
+        private static int beatCountFull, beatCountD8, beatCountHalf;
         private static boolean active = false;
 
         public static void update(float delta){
@@ -22,7 +24,16 @@ public class BeatSequencer {
                 beatTimer -= beatInterval;
                 beatFull = true;
                 beatCountFull++;
-                System.out.print("Full Beat Triggered");
+            }
+
+            beatHalf = false;
+            beatIntervalHalf = beatInterval / 2;
+            beatTimerHalf += delta;
+
+            if(beatTimerHalf >= beatIntervalHalf && active){
+                beatTimerHalf -= beatIntervalHalf;
+                beatHalf = true;
+                beatCountHalf++;
             }
 
             beatD8 = false;
@@ -33,7 +44,6 @@ public class BeatSequencer {
                 beatTimerD8 -= beatIntervalD8;
                 beatD8 = true;
                 beatCountD8++;
-                System.out.print("8th Beat Triggered");
             }
         }
 

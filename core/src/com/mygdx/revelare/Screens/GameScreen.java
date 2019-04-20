@@ -1,4 +1,4 @@
-package com.mygdx.revelare.screens;
+package com.mygdx.revelare.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
