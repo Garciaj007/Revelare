@@ -20,7 +20,7 @@ public class Assets {
     public static final String tranceSheet = "data/trance_sheet.png";
     public static final String zigzagSheet = "data/zigzag_sheet.png";
     public static final String circleSheet = "data/circleanim_sheet.png";
-    public static final String musicScore1 = "data/birdsong.mp3";
+    public static final String musicScore1 = "data/awake.mp3";
 
     //Wrapper Methods
 

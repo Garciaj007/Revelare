@@ -7,8 +7,14 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.mygdx.revelare.Actors.BackgroundActor;
 import com.mygdx.revelare.Screens.MainMenuScreen;
 import com.mygdx.revelare.Utils.Assets;
+import com.mygdx.revelare.Utils.BackgroundActorInfo;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class RevelareMain extends Game {
 
@@ -22,15 +28,22 @@ public class RevelareMain extends Game {
     public SpriteBatch batch;
 	public OrthographicCamera camera;
 	public BitmapFont font;
+	public Random random;
+	public List<BackgroundActorInfo> backgroundActorInfos = new ArrayList<BackgroundActorInfo>();
 	public Music music;
 
 	@Override
 	public void create () {
-		Assets.load();
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, V_WIDTH, V_HEIGHT);
 		batch = new SpriteBatch();
 		font = new BitmapFont();
+		random = new Random();
+
+		camera.setToOrtho(false, V_WIDTH, V_HEIGHT);
+
+		music.setLooping(true);
+
+        Assets.load();
 
 		while(true) {
             if (Assets.update()) {

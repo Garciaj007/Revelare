@@ -6,7 +6,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.mygdx.revelare.Utils.BackgroundActorInfo;
+
+import javax.xml.soap.Text;
 
 public class BackgroundActor extends Actor {
 
@@ -18,9 +22,26 @@ public class BackgroundActor extends Actor {
     private Animation<TextureRegion> boxAnimation;
     private float stateTime = 0f;
     private float scale = 2, rotation = 0;
+    private final float MARGIN = 120, SIZE = 96;
+    private final Vector2 POSITION_OFFSET = new Vector2(14, -4 );
+
+    //Getters & Setters
+    public void setBoxAnimation(BackgroundActorInfo backgroundActorInfo){
+        boxAnimation = setBoxAnimation(backgroundActorInfo.frameCols,
+                backgroundActorInfo.frameRows, backgroundActorInfo.offset,
+                backgroundActorInfo.sheet, backgroundActorInfo.animationSpeed);
+    }
 
     //Constructor
-    public BackgroundActor(int frameCols, int frameRows, int offset, Texture sheet, float animSpeed){
+    public BackgroundActor(BackgroundActorInfo backgroundActorInfo){
+        setBoxAnimation(backgroundActorInfo);
+    }
+
+    private void resetAnimation(){
+        stateTime = 0f; scale = 2; rotation = 0;
+    }
+
+    private Animation<TextureRegion> setBoxAnimation(int frameCols, int frameRows, int offset, Texture sheet, float animationsSpeed){
         TextureRegion[][] temp = TextureRegion.split(sheet,
                 sheet.getWidth() / frameCols,
                 sheet.getHeight() / frameRows);
@@ -34,7 +55,7 @@ public class BackgroundActor extends Actor {
             }
         }
 
-        boxAnimation = new Animation<TextureRegion>(animSpeed, animation);
+        return new Animation<TextureRegion>(animationsSpeed, animation);
     }
 
     //Updating Actor
@@ -89,9 +110,9 @@ public class BackgroundActor extends Actor {
 
         batch.setColor(c.r,c.g,c.b,c.a * parentAlpha);
 
-        for(int i = 0; i < 6; i++){
-            for(int j = 0; j < 10; j++){
-                batch.draw(currentFrame, 128 * i - 8, 128 * j + 8, 96 / 2, 96 / 2, 96, 96, scale, scale, rotation);
+        for(int i = 0; i < 8; i++){
+            for(int j = 0; j < 12; j++){
+                batch.draw(currentFrame, MARGIN * i - POSITION_OFFSET.x, MARGIN * j + POSITION_OFFSET.y, SIZE / 2, SIZE / 2, SIZE, SIZE, scale, scale, rotation);
             }
         }
 
