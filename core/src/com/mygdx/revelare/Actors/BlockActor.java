@@ -17,12 +17,15 @@ public class BlockActor extends Actor {
     private BlockActorInfo info;
     private TextureRegion textureRegion;
     private Polygon polygon;
-    private float x, y, scale, rotation;
+    private float x, y, scale, rotation, stageHeight, spawnInterval;
+    private boolean active = false;
 
     //Getters
-    public Polygon GetCollisionPolygon(){
+    public Polygon getCollisionPolygon(){
         return polygon;
     }
+    public boolean isActive() { return active; }
+    public float getY() { return y; }
 
     //Constructor
     public BlockActor(BlockActorInfo info, Stage stage){
@@ -34,7 +37,8 @@ public class BlockActor extends Actor {
         scale = 1;
 
         //Setting Blocks Initial Position
-        y = stage.getHeight();
+        stageHeight = stage.getHeight();
+        y = stageHeight;
 
         switch(info.spawnPosition){
             case 1:
@@ -66,13 +70,15 @@ public class BlockActor extends Actor {
     //Updating Actor
     @Override
     public void act(float delta){
-        //Updating Simulated Physics
-        y -= info.spawnSpeed * delta;
-        rotation += info.spawnRotationSpeed * delta;
+        if(active) {
+            //Updating Simulated Physics
+            y -= info.spawnSpeed * delta;
+            rotation += info.spawnRotationSpeed * delta;
 
-        //Updating Collision Polygon
-        polygon.setPosition(x, y);
-        polygon.setRotation(rotation);
+            //Updating Collision Polygon
+            polygon.setPosition(x, y);
+            polygon.setRotation(rotation);
+        }
     }
 
     //Drawing Actor
@@ -88,5 +94,22 @@ public class BlockActor extends Actor {
     public void drawDebug(ShapeRenderer shapeRenderer) {
         shapeRenderer.setColor(Color.GREEN);
         shapeRenderer.polygon(polygon.getTransformedVertices());
+    }
+
+    public void start(){
+        active = true;
+    }
+
+    public void reset(){
+        active = false;
+
+        //Setting Blocks Initial Position, Rotation & Scale
+        y = stageHeight;
+        rotation = info.spawnRotation;
+        scale = 1;
+
+        //Updating Collision Polygon
+        polygon.setPosition(x, y);
+        polygon.setRotation(rotation);
     }
 }

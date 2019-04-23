@@ -5,18 +5,14 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.badlogic.gdx.utils.viewport.FillViewport;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.mygdx.revelare.Actors.BackgroundActor;
 import com.mygdx.revelare.Actors.BlockActor;
 import com.mygdx.revelare.Actors.PlayerActor;
 import com.mygdx.revelare.RevelareMain;
 import com.mygdx.revelare.Utils.Assets;
-import com.mygdx.revelare.Utils.BackgroundActorInfo;
 import com.mygdx.revelare.Utils.BeatSequencer;
 import com.mygdx.revelare.Utils.BlockActorInfo;
 
@@ -28,24 +24,20 @@ public class MainMenuScreen implements Screen {
     private BackgroundActor backgroundActor;
     private PlayerActor playerActor;
 
-    private BlockActor block;
-
     public MainMenuScreen(final RevelareMain game){
         this.game = game;
 
         stage = new Stage(new ExtendViewport(RevelareMain.V_WIDTH, RevelareMain.V_HEIGHT, game.camera));
         Gdx.input.setInputProcessor(stage);
 
-        backgroundActor = new BackgroundActor(game.backgroundActorInfos.get(this.game.random.nextInt(game.backgroundActorInfos.size())));
-        block = new BlockActor(new BlockActorInfo(3, 0,100,50,200, 30, false, Color.WHITE), stage);
-        playerActor = new PlayerActor(new Vector2(stage.getWidth() / 2, 200), 180, stage);
+        backgroundActor = new BackgroundActor(game.backgroundActorInfoList.get(this.game.random.nextInt(game.backgroundActorInfoList.size())));
+        playerActor = new PlayerActor(new Vector2(stage.getWidth() / 2, 200), 180, 150, stage, false);
 
-        stage.setDebugAll(true);
         stage.addActor(backgroundActor);
-        stage.addActor(block);
         stage.addActor(playerActor);
 
-        this.game.music = Assets.get(Assets.musicScore1, Music.class);
+        this.game.music = Assets.get(Assets.song1.path, Music.class);
+        this.game.music.setLooping(true);
     }
 
     @Override
@@ -64,7 +56,6 @@ public class MainMenuScreen implements Screen {
         stage.act(delta);
 
         BeatSequencer.BeatAnalyser.update(delta);
-
         if(BeatSequencer.BeatAnalyser.beatHalf){
             if(state){
                 backgroundActor.playAnim1();
@@ -78,8 +69,8 @@ public class MainMenuScreen implements Screen {
     @Override
     public void show() {
         game.music.play();
-        BeatSequencer.BeatAnalyser.bpm = 124;
-        BeatSequencer.BeatAnalyser.Start();
+        BeatSequencer.BeatAnalyser.bpm = Assets.song1.bpm;
+        BeatSequencer.BeatAnalyser.start();
     }
 
     @Override

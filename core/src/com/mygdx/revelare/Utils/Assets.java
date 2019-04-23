@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 
 public class Assets {
 
+
     /** Wrapper Class for AssetManager */
 
     //AssetManager
@@ -20,12 +21,12 @@ public class Assets {
     public static final String tranceSheet = "data/trance_sheet.png";
     public static final String zigzagSheet = "data/zigzag_sheet.png";
     public static final String circleSheet = "data/circleanim_sheet.png";
-    public static final String musicScore1 = "data/awake.mp3";
+    public static final MusicInfo song1 = new MusicInfo("data/awake.mp3", 124);
 
     //Wrapper Methods
 
     public static void load(){
-        assetManager.load(musicScore1, Music.class);
+        song1.load(assetManager);
         assetManager.load(rectangle, Texture.class);
         assetManager.load(circle, Texture.class);
         assetManager.load(circleBorder, Texture.class);
