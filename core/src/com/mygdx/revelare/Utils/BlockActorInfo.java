@@ -25,4 +25,8 @@ public class BlockActorInfo{
         this.invisible = invisible;
         this.spawnColor = spawnColor;
     }
+
+    public void SetRandSpawnColor(LevelInfo info){
+        this.spawnColor = info.getColor();
+    }
 }

@@ -11,8 +11,10 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.mygdx.revelare.Utils.Assets;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PlayerActor extends Actor {
 
@@ -24,6 +26,10 @@ public class PlayerActor extends Actor {
         private Vector2 position;
         private Color circleColor;
         private float radius;
+
+        public void setColor(Color c){
+            circleColor = c;
+        }
 
         public ColorSwitcherActor(Vector2 position, float radius){
             this.position = position;
@@ -40,6 +46,7 @@ public class PlayerActor extends Actor {
                     public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                         System.out.println("touchDown at:" + x + ", " + y + " | Pointer: " + pointer + " Button: " + button);
                         rotateStop();
+                        colorSwitch();
                         return true;
                     }
 
@@ -72,6 +79,11 @@ public class PlayerActor extends Actor {
         private float orbitRadius, radius;
         private double angle, angularVel;
 
+        //Getters & Setters
+        public Color getCircleColor(){ return this.circleColor; }
+        public void setCircleColor(Color circleColor) { this.circleColor = circleColor; }
+        public void setVelocity(double velocity){ this.angularVel = velocity; }
+
         public OrbiterActor(Vector2 offset, float radius, float orbitRadius, double angularVel){
             this.offset = offset;
             this.orbitRadius = orbitRadius;
@@ -89,9 +101,6 @@ public class PlayerActor extends Actor {
             circle.setPosition(getPosition(angle));
         }
 
-        public void setCircleColor(Color circleColor) {
-            this.circleColor = circleColor;
-        }
 
         @Override
         public void act(float delta){
@@ -141,12 +150,24 @@ public class PlayerActor extends Actor {
     private float outerRadius;
     private boolean canControl, resetting;
 
+    private List<Color> possibleColors;
+    private int selectedColorSwitcherColor = 1;
+    private int selectedOrbitorColor = 0;
+
+    //Getters & Setters
     public Circle getCollisionCircle(){ return orbitor.circle; }
+    public void setPlayerVelocity(double velocity){ orbitor.setVelocity(velocity); }
+    public void setPossibleColors(List<Color> possibleColors){ this.possibleColors = possibleColors; colorSwitch(); }
+    public Color getColor(){ return orbitor.circleColor; }
 
     public PlayerActor(Vector2 position, float outerRadius, float velocity, Stage stage, boolean canControl){
         this.outerRadius = outerRadius;
         this.playerPosition = position;
         this.canControl = canControl;
+
+        possibleColors = new ArrayList<Color>();
+        possibleColors.add(Color.WHITE);
+        possibleColors.add(Color.WHITE);
 
         orbitor = new OrbiterActor(playerPosition, 20, outerRadius, velocity);
         switcher = new ColorSwitcherActor(playerPosition, 30);
@@ -154,6 +175,66 @@ public class PlayerActor extends Actor {
         rightButtonActor = new Actor();
 
         if(canControl) {
+            selectedOrbitorColor = 0;
+            selectedColorSwitcherColor = 1;
+            switcher.setColor(possibleColors.get(selectedColorSwitcherColor));
+            orbitor.setCircleColor(possibleColors.get(selectedOrbitorColor));
+
+            leftButtonActor.setBounds(0, 0, stage.getWidth() / 2 - 50, stage.getHeight());
+            rightButtonActor.setBounds(stage.getWidth() / 2 + 50, 0, stage.getWidth() / 2 - 50, stage.getHeight());
+
+            leftButtonActor.addListener(new InputListener() {
+                @Override
+                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                    rotateLeft();
+                    return true;
+                }
+
+                @Override
+                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                    rotateStop();
+                }
+            });
+
+            rightButtonActor.addListener(new InputListener() {
+                @Override
+                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                    rotateRight();
+                    return true;
+                }
+
+                @Override
+                public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                    rotateStop();
+                }
+            });
+        }
+
+        circleOutline = new TextureRegion(Assets.get(Assets.circleBorder, Texture.class));
+
+        stage.addActor(orbitor);
+        stage.addActor(switcher);
+        stage.addActor(leftButtonActor);
+        stage.addActor(rightButtonActor);
+    }
+
+    public PlayerActor(Vector2 position, float outerRadius, float velocity, Stage stage, boolean canControl, List<Color> possibleColors){
+        this.outerRadius = outerRadius;
+        this.playerPosition = position;
+        this.canControl = canControl;
+        this.possibleColors = possibleColors;
+
+        orbitor = new OrbiterActor(playerPosition, 20, outerRadius, velocity);
+        switcher = new ColorSwitcherActor(playerPosition, 30);
+        leftButtonActor = new Actor();
+        rightButtonActor = new Actor();
+
+        if(canControl) {
+            selectedOrbitorColor = 0;
+            selectedColorSwitcherColor = 1;
+            switcher.setColor(possibleColors.get(selectedColorSwitcherColor));
+            orbitor.setCircleColor(possibleColors.get(selectedOrbitorColor));
+
             leftButtonActor.setBounds(0, 0, stage.getWidth() / 2 - 50, stage.getHeight());
             rightButtonActor.setBounds(stage.getWidth() / 2 + 50, 0, stage.getWidth() / 2 - 50, stage.getHeight());
 
@@ -207,6 +288,25 @@ public class PlayerActor extends Actor {
 
     public void rotateStop(){
         inputRotationState = InputRotationState.None;
+    }
+
+    public void colorSwitch(){
+        if(!possibleColors.isEmpty() && possibleColors.size() >= 2) {
+            if (selectedColorSwitcherColor + 1 >= possibleColors.size()) {
+                selectedColorSwitcherColor = 0;
+            } else {
+                selectedColorSwitcherColor++;
+            }
+
+            if (selectedOrbitorColor + 1 >= possibleColors.size()) {
+                selectedOrbitorColor = 0;
+            } else {
+                selectedOrbitorColor++;
+            }
+
+            switcher.setColor(possibleColors.get(selectedColorSwitcherColor));
+            orbitor.setCircleColor(possibleColors.get(selectedOrbitorColor));
+        }
     }
 
 }

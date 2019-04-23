@@ -94,19 +94,27 @@ public class GameScreen implements Screen {
             }
         }
 
-        if(!blockList.isEmpty() && blockList.get(blockList.size()-1).isActive()){
-            System.out.println("Last Block Y Position: " + blockList.get(blockList.size()-1).getY());
-            if(blockList.get(blockList.size()-1).getY() < 0)
-                onLevelCompleted();
+        if(!blockList.isEmpty()){
+            BlockActor lastBlock = blockList.get(blockList.size()-1);
+            if(lastBlock.isActive()) {
+                if (lastBlock.getY() + lastBlock.getHeight() < 0)
+                    onLevelCompleted();
+            }
         }
 
         for (BlockActor b: blockList) {
             if(PlayerCollision.overlaps(b.getCollisionPolygon(), playerActor.getCollisionCircle())){
-                resetLevel();
+                System.out.println("Block Color " + b.getColor() + " | Player Color " + playerActor.getColor());
+                if(b.getColor() != playerActor.getColor()) {
+                    resetLevel();
+                } else {
+                    break;
+                }
             }
         }
 
         BeatSequencer.BeatAnalyser.update(delta);
+
         if(BeatSequencer.BeatAnalyser.beatHalf){
             if(state){
                 backgroundActor.playAnim1();
@@ -114,6 +122,15 @@ public class GameScreen implements Screen {
                 backgroundActor.playAnim2();
             }
             state = !state;
+        }
+
+        if(BeatSequencer.BeatAnalyser.beatFull){
+            for(BlockActor b : blockList){
+                if(b.isActive())
+                    b.animate();
+                else
+                    break;
+            }
         }
     }
 
@@ -164,8 +181,14 @@ public class GameScreen implements Screen {
         currentTime = 0;
         //Spawn Blocks and Begin GamePlay
         levelInfo = actInfo.levelInfoList.get(level - 1);
+
+        playerActor.setPossibleColors(levelInfo.possibleColors);
+        playerActor.setPlayerVelocity(actInfo.basePlayerVelocity);
+
         for(BlockActorInfo blockInfo : levelInfo.blockActorInfoList){
+            blockInfo.SetRandSpawnColor(levelInfo);
             BlockActor b = new BlockActor(blockInfo, stage);
+            b.setVelocity(actInfo.baseBlockVelocity);
             stage.addActor(b);
             blockList.add(b);
         }
