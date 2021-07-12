@@ -105,7 +105,7 @@ public class BlockActor extends Actor {
     @Override
     public void draw(Batch batch, float parentAlpha){
         Color color = info.spawnColor;
-        batch.setColor(color.r, color.g, color.b, color.a * parentAlpha);
+        batch.setColor(color.r, color.g, color.b, color.a * parentAlpha * 0.8f);
         batch.draw(textureRegion, x, y, info.spawnWidth / 2, info.spawnHeight / 2, info.spawnWidth, info.spawnHeight, scale, scale, rotation);
     }
 

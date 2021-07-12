@@ -36,10 +36,10 @@ public class GameScreen implements Screen {
     private float currentSpawnInterval, currentTime;
 
     //Constructor
-    public GameScreen(final RevelareMain game, ActInfo actInfo, int startingLevel){
+    public GameScreen(final RevelareMain game, ActInfo actInfo, int startingLevel) {
         this.game = game;
         this.actInfo = actInfo;
-        level = startingLevel;
+        this.level = startingLevel;
 
         //Creating new Stage and Attaching Input
         stage = new Stage(new ExtendViewport(RevelareMain.V_WIDTH, RevelareMain.V_HEIGHT, game.camera));
@@ -49,25 +49,30 @@ public class GameScreen implements Screen {
         backgroundActor = new BackgroundActor(game.backgroundActorInfoList.get(this.game.random.nextInt(game.backgroundActorInfoList.size())));
         playerActor = new PlayerActor(new Vector2(stage.getWidth() / 2, 200), 180, this.actInfo.basePlayerVelocity, stage, true);
 
+        //Display Debug Information
         stage.setDebugAll(true);
+
+        //Adding Actors to Stage
         stage.addActor(backgroundActor);
         stage.addActor(playerActor);
 
-        if(this.game.music != null && this.game.music.isPlaying()){
+        //Checking if music is playing
+        if (this.game.music != null && this.game.music.isPlaying()) {
             this.game.music.stop();
         }
-
         this.game.music = Assets.get(this.actInfo.musicInfo.path, Music.class);
         this.game.music.setLooping(true);
 
+        //New List of Active Blocks
         blockList = new ArrayList<BlockActor>();
 
+        //
         startLevel();
     }
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(.1f, .1f,.1f,1f);
+        Gdx.gl.glClearColor(.1f, .1f, .1f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         update(delta);
@@ -75,17 +80,17 @@ public class GameScreen implements Screen {
         stage.draw();
     }
 
-    private void update(float delta){
+    private void update(float delta) {
         stage.act(delta);
 
         currentTime += delta;
 
-        if(currentTime > currentSpawnInterval){
-            for(int i = 0; i < blockList.size(); i++){
-                if(!blockList.get(i).isActive()){
+        if (currentTime > currentSpawnInterval) {
+            for (int i = 0; i < blockList.size(); i++) {
+                if (!blockList.get(i).isActive()) {
                     System.out.println("Block " + (i + 1) + " Spawned");
                     blockList.get(i).start();
-                    if(i + 1 < blockList.size()){
+                    if (i + 1 < blockList.size()) {
                         currentSpawnInterval = levelInfo.blockActorInfoList.get(i + 1).spawnInterval;
                         currentTime = 0;
                     }
@@ -94,29 +99,28 @@ public class GameScreen implements Screen {
             }
         }
 
-        if(!blockList.isEmpty()){
-            BlockActor lastBlock = blockList.get(blockList.size()-1);
-            if(lastBlock.isActive()) {
+        if (!blockList.isEmpty()) {
+            BlockActor lastBlock = blockList.get(blockList.size() - 1);
+            if (lastBlock.isActive()) {
                 if (lastBlock.getY() + lastBlock.getHeight() < 0)
                     onLevelCompleted();
             }
         }
 
-        for (BlockActor b: blockList) {
-            if(PlayerCollision.overlaps(b.getCollisionPolygon(), playerActor.getCollisionCircle())){
+        for (BlockActor b : blockList) {
+            if (PlayerCollision.overlaps(b.getCollisionPolygon(), playerActor.getCollisionCircle())) {
                 System.out.println("Block Color " + b.getColor() + " | Player Color " + playerActor.getColor());
-                if(b.getColor() != playerActor.getColor()) {
+                if (b.getColor() != playerActor.getColor())
                     resetLevel();
-                } else {
+                else
                     break;
-                }
             }
         }
 
         BeatSequencer.BeatAnalyser.update(delta);
 
-        if(BeatSequencer.BeatAnalyser.beatHalf){
-            if(state){
+        if (BeatSequencer.BeatAnalyser.beatHalf) {
+            if (state) {
                 backgroundActor.playAnim1();
             } else {
                 backgroundActor.playAnim2();
@@ -124,9 +128,9 @@ public class GameScreen implements Screen {
             state = !state;
         }
 
-        if(BeatSequencer.BeatAnalyser.beatFull){
-            for(BlockActor b : blockList){
-                if(b.isActive())
+        if (BeatSequencer.BeatAnalyser.beatFull) {
+            for (BlockActor b : blockList) {
+                if (b.isActive())
                     b.animate();
                 else
                     break;
@@ -168,8 +172,8 @@ public class GameScreen implements Screen {
         stage.getViewport().update(width, height, false);
     }
 
-    private void startLevel(){
-        if(backgroundActor != null){
+    private void startLevel() {
+        if (backgroundActor != null) {
             backgroundActor.remove();
             playerActor.remove();
         }
@@ -185,7 +189,7 @@ public class GameScreen implements Screen {
         playerActor.setPossibleColors(levelInfo.possibleColors);
         playerActor.setPlayerVelocity(actInfo.basePlayerVelocity);
 
-        for(BlockActorInfo blockInfo : levelInfo.blockActorInfoList){
+        for (BlockActorInfo blockInfo : levelInfo.blockActorInfoList) {
             blockInfo.SetRandSpawnColor(levelInfo);
             BlockActor b = new BlockActor(blockInfo, stage);
             b.setVelocity(actInfo.baseBlockVelocity);
@@ -197,9 +201,9 @@ public class GameScreen implements Screen {
         //levelDoneSpawning = false;
     }
 
-    private void resetLevel(){
+    private void resetLevel() {
         //When Player Dies, Clear Blocks List and
-        for(BlockActor b: blockList){
+        for (BlockActor b : blockList) {
             b.reset();
         }
 
@@ -207,7 +211,7 @@ public class GameScreen implements Screen {
         currentTime = 0;
     }
 
-    private void onLevelCompleted(){
+    private void onLevelCompleted() {
         System.out.println("Level " + level + " Completed");
         //When a Level is completed increase Level Counter and check if Act is completed
         ++level;
@@ -215,13 +219,13 @@ public class GameScreen implements Screen {
         System.out.println("Level " + level);
 
         //Remove Current Blocks
-        for(BlockActor b : blockList){
+        for (BlockActor b : blockList) {
             b.remove();
         }
 
         blockList.clear();
 
-        if(level > actInfo.levelInfoList.size()){
+        if (level > actInfo.levelInfoList.size()) {
             System.out.println("Act Completed");
             onCompleted();
         } else {
@@ -230,8 +234,10 @@ public class GameScreen implements Screen {
         }
     }
 
-    private void onCompleted(){
+    private void onCompleted() {
         //Switch Screen into a new Act
+
+        //In This case since there is no new Act switch to Menu Screen
         game.setScreen(new MainMenuScreen(game));
     }
 

@@ -49,10 +49,7 @@ public class RevelareMain extends Game {
 
 		while(true) {
             if (Assets.update()) {
-            	//Populate BackgroundActorInfoList ArrayList
-				backgroundActorInfoList.add(new BackgroundActorInfo(3,3,0,Assets.get(Assets.popSheet, Texture.class), 0.025f));
-				backgroundActorInfoList.add(new BackgroundActorInfo(3,3,1, Assets.get(Assets.tranceSheet, Texture.class), 0.025f));
-				backgroundActorInfoList.add(new BackgroundActorInfo(4,4,2,Assets.get(Assets.zigzagSheet, Texture.class), 0.025f));
+            	populateBackgroundInfoList();
 
 				ActInfo actInfo = new ActInfo(Assets.song1, 300, 200);
 
@@ -105,5 +102,13 @@ public class RevelareMain extends Game {
 		batch.dispose();
 		Assets.dispose();
 		getScreen().dispose();
+	}
+
+	//Custom Methods
+	private void populateBackgroundInfoList(){
+		//Populate BackgroundActorInfoList of all possible BackgroundActorInfo's
+		backgroundActorInfoList.add(new BackgroundActorInfo(3,3,0,Assets.get(Assets.popSheet, Texture.class), 0.025f));
+		backgroundActorInfoList.add(new BackgroundActorInfo(3,3,1, Assets.get(Assets.tranceSheet, Texture.class), 0.025f));
+		backgroundActorInfoList.add(new BackgroundActorInfo(4,4,2,Assets.get(Assets.zigzagSheet, Texture.class), 0.025f));
 	}
 }
